@@ -15,4 +15,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'IndexController@index');
 Route::get('/more', 'IndexController@more');
-Route::get('/detail', 'DetailController@detail');
+Route::get('/search', 'SearchController@index');
+Route::get('/search/more', 'SearchController@search');

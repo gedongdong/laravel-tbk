@@ -6,7 +6,7 @@
         <form class="weui-search-bar__form">
             <div class="weui-search-bar__box">
                 <i class="weui-icon-search"></i>
-                <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
+                <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="输入商品名称" required="">
                 <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
             </div>
             <label class="weui-search-bar__label" id="searchText">
@@ -18,20 +18,21 @@
     </div>
 
     {{--轮播--}}
-{{--    <div class="swiper-container" data-space-between='10' data-pagination='.swiper-pagination' data-autoplay="1000">--}}
-{{--        <div class="swiper-wrapper">--}}
-{{--            <div class="swiper-slide"><img height="200" width="100%"--}}
-{{--                                           src="/img/swiper-1.jpg" alt=""></div>--}}
-{{--            <div class="swiper-slide"><img height="200" width="100%"--}}
-{{--                                           src="/img/swiper-2.jpg" alt=""></div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+    {{--    <div class="swiper-container" data-space-between='10' data-pagination='.swiper-pagination' data-autoplay="1000">--}}
+    {{--        <div class="swiper-wrapper">--}}
+    {{--            <div class="swiper-slide"><img height="200" width="100%"--}}
+    {{--                                           src="/img/swiper-1.jpg" alt=""></div>--}}
+    {{--            <div class="swiper-slide"><img height="200" width="100%"--}}
+    {{--                                           src="/img/swiper-2.jpg" alt=""></div>--}}
+    {{--        </div>--}}
+    {{--    </div>--}}
 
     {{--列表--}}
     <div class="weui-panel weui-panel_access">
         <div class="weui-panel__bd" id="list_item">
             @foreach($products as $pro)
-                <a href="javascript:void(0)" onclick="show({{ $pro->id }})" class="weui-media-box weui-media-box_appmsg">
+                <a href="javascript:void(0)" onclick="show({{ $pro->id }})"
+                   class="weui-media-box weui-media-box_appmsg">
                     <div class="weui-media-box__hd" style="height: 5.3rem;width: 5.3rem;line-height: 5.3rem;">
                         <img class="weui-media-box__thumb" src="{{ $pro->pict_url }}">
                     </div>
@@ -64,7 +65,8 @@
                         </p>
                     </div>
                 </a>
-                <div id="tkl_{{ $pro->id }}" style="background-color: #eee;width: 100%;height: auto;font-size: 0.5rem;color:#666;display: none;">
+                <div id="tkl_{{ $pro->id }}"
+                     style="background-color: #eee;width: 100%;height: auto;font-size: 0.5rem;color:#666;display: none;">
                     <div style="padding: 0.6rem;">
                         <div style="padding: 0.5rem;">
                             <div>{{ $pro->title }}</div>
@@ -72,9 +74,10 @@
                             <div>【券后价】{{ $pro->zk_final_price-$pro->coupon_price }}</div>
                             <div>------------</div>
                             <div>注意：请完整复制这条信息，{{ $pro->tkpwd }}，到【手机淘宝】即可查看或分享给好友</div>
-                            <input id="txt_{{ $pro->id }}" type="hidden" value="{{ $pro->title }}----【在售价】{{ $pro->zk_final_price }}元----【券后价】{{ $pro->zk_final_price-$pro->coupon_price }}元----注意：请完整复制这条信息，{{ $pro->tkpwd }}，到【手机淘宝】即可查看或分享给好友">
+                            <input id="txt_{{ $pro->id }}" type="hidden"
+                                   value="{{ $pro->title }}----【在售价】{{ $pro->zk_final_price }}元----【券后价】{{ $pro->zk_final_price-$pro->coupon_price }}元----注意：请完整复制这条信息，{{ $pro->tkpwd }}，到【手机淘宝】即可查看或分享给好友">
                         </div>
-                        <div style="text-align: right;"  onclick="copyText({{ $pro->id }})">
+                        <div style="text-align: right;" onclick="copyText({{ $pro->id }})">
                             <a href="javascript:void(0);" class="weui-btn weui-btn_mini weui-btn_primary">点击复制淘口令</a>
                         </div>
                     </div>
@@ -122,15 +125,15 @@
         });
 
         function show(id) {
-            if($('#tkl_'+id).css('display') === 'none'){
-                $('#tkl_'+id).css({'display': 'block'});
-            }else{
-                $('#tkl_'+id).hide();
+            if ($('#tkl_' + id).css('display') === 'none') {
+                $('#tkl_' + id).css({'display': 'block'});
+            } else {
+                $('#tkl_' + id).hide();
             }
         }
 
-        function copyText(id,message) {
-            var content = $('#txt_'+id).val();
+        function copyText(id, message) {
+            var content = $('#txt_' + id).val();
             var aux = document.createElement("input");
             aux.setAttribute("value", content);
             document.body.appendChild(aux);
@@ -139,10 +142,16 @@
             document.body.removeChild(aux);
             if (message == null) {
                 $.toast("复制成功，分享好友或直接打开淘宝领券", "text");
-            } else{
+            } else {
                 $.toast(message, "text");
             }
         }
+
+        $("form").on("submit",function(event){
+            var q = $('#searchInput').val();
+            window.location.href = '/search?q=' + q;
+            return false;
+        });
 
     </script>
 @endsection

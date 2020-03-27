@@ -16,7 +16,7 @@ class GetData extends Command
      */
     protected $signature = 'get:taobaoke';
 
-    protected $secretKey = 'de2b0f56cd0e164dfef62c656c699ac1';
+    protected $secretKey = '';
 
     /**
      * The console command description.
@@ -42,6 +42,8 @@ class GetData extends Command
      */
     public function handle()
     {
+        $this->secretKey = env('tbk_secret', '');
+
         $config = [
             'appkey'    => '28240849',
             'secretKey' => $this->secretKey,
@@ -93,14 +95,14 @@ class GetData extends Command
                 $this->handleProduct($res2, $favid);
             }
 
-            echo '开始生成淘口令...'.PHP_EOL;
-            $products = Product::where('coupon_click_url','!=','')->select('id','coupon_click_url','tkpwd')->get();
-            foreach ($products as $product){
+            echo '开始生成淘口令...' . PHP_EOL;
+            $products = Product::where('coupon_click_url', '!=', '')->select('id', 'coupon_click_url', 'tkpwd')->get();
+            foreach ($products as $product) {
                 $param = [
                     'text' => '淘宝天猫优惠券',
-                    'url' => $product->coupon_click_url
+                    'url'  => $product->coupon_click_url
                 ];
-                $res3 = $app->tpwd->create($param);
+                $res3  = $app->tpwd->create($param);
                 var_dump($res3);
                 $result = $res3->data->model ?? '';
                 if ($results) {
