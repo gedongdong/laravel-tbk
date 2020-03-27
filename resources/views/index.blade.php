@@ -17,15 +17,7 @@
         <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
     </div>
 
-    {{--轮播--}}
-    {{--    <div class="swiper-container" data-space-between='10' data-pagination='.swiper-pagination' data-autoplay="1000">--}}
-    {{--        <div class="swiper-wrapper">--}}
-    {{--            <div class="swiper-slide"><img height="200" width="100%"--}}
-    {{--                                           src="/img/swiper-1.jpg" alt=""></div>--}}
-    {{--            <div class="swiper-slide"><img height="200" width="100%"--}}
-    {{--                                           src="/img/swiper-2.jpg" alt=""></div>--}}
-    {{--        </div>--}}
-    {{--    </div>--}}
+    <div style="width: 100%;"><img style="width: 100%;" src="/img/buzhou.jpg" alt=""></div>
 
     {{--列表--}}
     <div class="weui-panel weui-panel_access">
