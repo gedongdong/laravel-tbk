@@ -1,0 +1,36 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* 列表页原价和特殊价格标注*/
+.wy-pro-pri .price_gray{
+    color:#ccc; font-size:14px;
+}
+.wy-pro-pri .price_gray i{
+    text-decoration:line-through;
+}
+.wy-pro-pri .volume{
+    font-size:10px; float: right;color:#333;
+}
+.wy-pro-list li span.tag_price{
+    display:block; width:28%;  height:18px; line-height:18px; text-align:center; font-size:12px; border-radius:3px; color:#fff; position:absolute; bottom:50px; left:36%;
+}
+.wy-pro-list li span.tag-red{
+    background:#fa3e1d;
+}
+
+/* 详情页原价和销量*/
+.wy-media-box-nomg{
+    background:#fff; padding:12px 10px; border-top:1px solid #e1e1e1; border-bottom:1px solid #e1e1e1; text-align:left;
+}
+.weui-media-box__desc{
+    color:#999;font-size:12px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+}
+.wy-pro-pri .font-12{
+    font-size:12px;
+}
+.wy-pro-pri span.tag_price{
+    font-size:12px; border-radius:3px; color:#fff; padding:0 4px;
+}
+.wy-pro-pri span.tag-red{
+    background:#fa3e1d;
+}
