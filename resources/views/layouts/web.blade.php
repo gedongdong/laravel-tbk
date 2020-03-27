@@ -17,8 +17,10 @@
     @yield('style')
 </head>
 <body ontouchstart>
+
 @yield('content')
-</body>
+
+<script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278723161&web_id=1278723161"></script>
 <script src="/weui/js/jquery-weui.js"></script>
 <script src="/weui/lib/fastclick.js"></script>
 <script>
@@ -26,6 +28,8 @@
         FastClick.attach(document.body);
     });
     $.toast.prototype.defaults.duration = 3000;
+    $("a[title='站长统计']").hide();
 </script>
 @yield('script')
+</body>
 </html>
