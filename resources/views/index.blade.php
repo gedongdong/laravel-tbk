@@ -17,7 +17,7 @@
         <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
     </div>
 
-    <div style="width: 100%;"><img style="width: 100%;" src="/img/buzhou.jpg" alt=""></div>
+    <div style="width: 100%;" id="buzhou"><img style="width: 100%;" src="/img/buzhou.jpg" alt=""></div>
 
     {{--列表--}}
     <div class="weui-panel weui-panel_access">
@@ -143,6 +143,26 @@
             var q = $('#searchInput').val();
             window.location.href = '/search?q=' + q;
             return false;
+        });
+
+        var pb1 = $.photoBrowser({
+            items: [
+                "/img/buzhou.jpg",
+            ],
+
+            onSlideChange: function(index) {
+                console.log(this, index);
+            },
+
+            onOpen: function() {
+                console.log("onOpen", this);
+            },
+            onClose: function() {
+                console.log("onClose", this);
+            }
+        });
+        $("#buzhou").click(function() {
+            pb1.open(2);
         });
 
     </script>
