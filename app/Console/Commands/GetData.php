@@ -6,16 +6,15 @@ use App\Models\Favorites;
 use App\Models\Product;
 use ETaobao\Factory;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 
-class Test extends Command
+class GetData extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'test:taobaoke';
+    protected $signature = 'get:taobaoke';
 
     protected $secretKey = 'de2b0f56cd0e164dfef62c656c699ac1';
 
