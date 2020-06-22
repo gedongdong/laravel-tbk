@@ -1,183 +1,168 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title><{$page_title}></title>
-    <meta charset="utf-8">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <meta name="msapplication-tap-highlight" content="no"/>
-    <link rel="stylesheet" href="//cdn.bootcss.com/weui/1.1.1/style/weui.min.css">
-    <link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/1.0.1/css/jquery-weui.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/modify.css">
-</head>
-<body ontouchstart>
-<!--顶部搜索-->
-<header class='weui-header'>
-    <div class="in-select">
-        <div class="weui-search-bar" id="searchBar">
-            <form class="weui-search-bar__form">
-                <div class="weui-search-bar__box">
-                    <i class="weui-icon-search"></i>
-                    <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
-                    <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+@extends('layouts.web')
+
+@section('content')
+    {{--搜索--}}
+    <div class="weui-search-bar" id="searchBar">
+        <form class="weui-search-bar__form">
+            <div class="weui-search-bar__box">
+                <i class="weui-icon-search"></i>
+                <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="输入商品名称" required="">
+                <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+            </div>
+            <label class="weui-search-bar__label" id="searchText">
+                <i class="weui-icon-search"></i>
+                <span>输入商品标题</span>
+            </label>
+        </form>
+        <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+    </div>
+
+    <div style="width: 100%;" id="buzhou"><img style="width: 100%;" src="/img/buzhou.jpg" alt=""></div>
+
+    {{--列表--}}
+    <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__bd" id="list_item">
+            @foreach($products as $pro)
+                <a href="javascript:void(0)" onclick="show({{ $pro->id }})"
+                   class="weui-media-box weui-media-box_appmsg">
+                    <div class="weui-media-box__hd" style="height: 5.3rem;width: 5.3rem;line-height: 5.3rem;">
+                        <img class="weui-media-box__thumb" src="{{ $pro->pict_url }}">
+                    </div>
+                    <div class="weui-media-box__bd" style="height: 5.3rem;">
+                        <p class="weui-media-box__desc"
+                           style="font-weight: 400;font-size: 0.7rem;color:#333;line-height: 1rem;">{{ $pro->title }}</p>
+                        @if($pro->nick)
+                            <p class="weui-media-box__desc" style="margin-top: 0.2rem;">
+                            <p style="width: 0.6rem;height: 0.6rem;display: block;float: left;"><img
+                                        src=@if($pro->user_type==1)"/img/tmail.jpeg"@else"/img/taobao.jpg"@endif alt=""
+                                style="height: 0.6rem;width: 0.6rem;"></p>
+                            <p style="display: block;float: left;line-height: 0.6rem; padding-left: 0.3rem;color:#999;font-size: 0.5rem;">{{ $pro->nick }}</p>
+                            </p>
+                        @endif
+                        <p style="clear: both;"></p>
+                        <p class="weui-media-box__desc" style="margin-top: 0.2rem;">
+                        <p style="width: 1rem;height: 0.9rem;display: block;float: left;background-image: url('/img/quan1.png');background-size: 1rem 0.9rem;background-repeat:no-repeat;color:#fff;font-size: 0.7rem;text-align: center;border-radius: 0.1rem 0 0 0.1rem;line-height: 0.9rem;"></p>
+                        <p style="display: block;float: left;line-height: 1rem; padding:0 0.1rem;color:#f06060;font-size: 0.6rem;">{{ $pro->coupon_price }}
+                            元</p>
+                        <p style="display: block;float: right;line-height: 0.8rem; padding:0 0.2rem;color:#999;font-size: 0.6rem;">
+                            销量 {{ $pro->volume }}</p>
+                        <p style="clear: both;"></p>
+                        <p class="weui-media-box__desc" style="margin-top: 0.2rem;">
+                        <p style="display: block;float: left;line-height: 0.8rem; padding:0 0.2rem 0 0;color:#999;font-size: 0.6rem;">
+                            券后 <span
+                                    style="color:#666;font-weight: bold;font-size: 0.8rem;">¥{{ $pro->zk_final_price-$pro->coupon_price }}</span>
+                        </p>
+                        <p style="display: block;float: left;line-height: 0.8rem; padding:0 0.2rem;color:#999;font-size: 0.6rem;text-decoration: line-through;">
+                            ￥{{ $pro->zk_final_price }}</p>
+                        </p>
+                    </div>
+                </a>
+                <div id="tkl_{{ $pro->id }}"
+                     style="background-color: #eee;width: 100%;height: auto;font-size: 0.5rem;color:#666;display: none;">
+                    <div style="padding: 0.6rem;">
+                        <div style="padding: 0.5rem;">
+                            <div>{{ $pro->title }}</div>
+                            <div>【在售价】{{ $pro->zk_final_price }}</div>
+                            <div>【券后价】{{ $pro->zk_final_price-$pro->coupon_price }}</div>
+                            <div>------------</div>
+                            <div>注意：请完整复制这条信息，{{ $pro->tkpwd }}，到【手机淘宝】即可查看或分享给好友</div>
+                            <input id="txt_{{ $pro->id }}" type="hidden"
+                                   value="{{ $pro->title }}----【在售价】{{ $pro->zk_final_price }}元----【券后价】{{ $pro->zk_final_price-$pro->coupon_price }}元----注意：请完整复制这条信息，{{ $pro->tkpwd }}，到【手机淘宝】即可查看或分享给好友">
+                        </div>
+                        <div style="text-align: right;" onclick="copyText({{ $pro->id }})">
+                            <a href="javascript:void(0);" class="weui-btn weui-btn_mini weui-btn_primary">点击复制淘口令</a>
+                        </div>
+                    </div>
                 </div>
-                <label class="weui-search-bar__label" id="searchText">
-                    <i class="weui-icon-search"></i>
-                    <span>搜索</span>
-                </label>
-            </form>
-            <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+            @endforeach
+        </div>
+        <div class="weui-loadmore" id="more">
+            <span id="page" style="display: none;">2</span>
+            <i class="weui-loading"></i>
+            <span class="weui-loadmore__tips">正在加载</span>
+        </div>
+        <div class="weui-footer" id="footer" style="display: none;margin: 0.5rem;">
+            <p class="weui-footer__text">~已经到底了~</p>
         </div>
     </div>
-</header>
-<!--主体-->
-<div class='weui-content'>
-    <!--顶部轮播-->
-{{--    <div class="swiper-container swiper-banner" data-space-between='10' data-pagination='.swiper-pagination'--}}
-{{--         data-autoplay="1000">--}}
-{{--        <div class="swiper-wrapper">--}}
-{{--            <div class="swiper-slide"><img--}}
-{{--                        src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1n3rZHFXXXXX9XFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg"--}}
-{{--                        alt=""></div>--}}
-{{--            <div class="swiper-slide"><img--}}
-{{--                        src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i4/TB10rkPGVXXXXXGapXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg"--}}
-{{--                        alt=""></div>--}}
-{{--            <div class="swiper-slide"><img--}}
-{{--                        src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1kQI3HpXXXXbSXFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg"--}}
-{{--                        alt=""></div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
+@endsection
 
-<!--图标分类-->
-{{--    <div class="weui-flex wy-iconlist-box">--}}
-{{--        <{foreach $pro_class as $v}>--}}
-{{--        <div class="weui-flex__item"><a href="/product.html?class_id=<{$v.id}>" class="wy-links-iconlist"><div class="img"><img src="<{$site_config.adminhost}><{$v.photo}>"></div><p><{$v.cname}></p></a></div>--}}
-{{--        <{/foreach}>--}}
-{{--    </div>--}}
+@section('script')
+    <script src='/weui/js/swiper.js'></script>
+    <script>
+        $(".swiper-container").swiper({
+            loop: true,
+            autoplay: 3000
+        });
 
-<!--精选推荐-->
-{{--    <div class="wy-Module white-color">--}}
-{{--        <div class="wy-Module-tit-line"><span>新品尝鲜</span></div>--}}
-{{--        <div class="wy-Module-con">--}}
-{{--            <div class="swiper-container swiper-jingxuan" style="padding-top:0;">--}}
-{{--                <div class="swiper-wrapper">--}}
-{{--                    <{foreach $new_pro as $v}>--}}
-{{--                    <div class="swiper-slide"><a href="/detail/<{$v.id}>.html"><img src="<{$v.photo}>" /><div class="name"><{$v.title}></div><div class="wy-pro-pri">¥<span><{$v.price_c}></span><{if $v.price>0}><span class="price_gray" style="font-size:10px;">¥<i><{$v.price}></i></span><{/if}></div></a></div>--}}
-{{--                    <{/foreach}>--}}
-{{--                </div>--}}
-{{--                <div class="swiper-pagination news-pagination"></div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-<!--畅销精选-->
-{{--    <div class="wy-Module recommend_index">--}}
-{{--        <div class="wy-Module-tit-line"><span>畅销精选</span></div>--}}
-{{--        <div class="wy-Module-con">--}}
-{{--            <!--<a href="/detail/21.html" class="block_qc"><img src="/static/image/img_index_qc.png" width="" height="" alt=""/></a>-->--}}
-{{--            <a href="/detail/22.html" class="block_ym"><img src="/static/image/img_index_ym.png" width="" height="" alt=""/></a>--}}
-{{--            <!--<a href="javascript:void(0);" class="block_fm01"><img src="/static/image/img_index_fm01.png" width="" height="" alt=""/></a>-->--}}
-{{--        </div>--}}
-{{--    </div>--}}
-<!--分类板块-->
-    <div class="wy-Module">
-        <div class="wy-Module-tit-line"><span>实时热销榜</span></div>
-        <div class="wy-Module-con">
-            <ul class="wy-pro-list clear">
-                @foreach($products as $product)
-                    <li>
-                        <a href="/detail/{{ $product->id }}.html">
-                            <div class="proimg"><img src="{{ $product->pict_url }}"></div>
-                            <div class="protxt">
-                                <div class="name" style="text-align: left;">{{ $product->title }}</div>
-                                @if($product->nick)
-                                    <div class="wy-pro-pri"><span style="float: left;padding-left: 0.1rem;"><img
-                                                    src="/img/tmail.jpeg" alt="" style="width: 0.8rem;"/></span>
-                                        <span style="float: left;padding-left: 0.2rem;color: #666;font-size: 10px;line-height: 0.8rem;">{{ $product->nick }}</span>
-                                        <span style="display: block;clear: both;"></span>
-                                    </div>
-                                @endif
-                                <div class="wy-pro-pri"><span class="coupon">券{{ $product->coupon_price }}元</span><span
-                                            class="volume" style="font-size:10px; float: right;"><i>月销
-                                            @if($product->volume>=10000)
-                                                {{ floor($product->volume/10000) }}万+
-                                            @else
-                                                {{ $product->volume }}
-                                            @endif
-                                        </i></span>
-                                    <span style="display: block;clear: both;"></span>
-                                </div>
-                                <div class="wy-pro-pri" style="text-align: left;">
-                                    券后¥<span
-                                            style="font-weight: bold;">{{ $product->zk_final_price-$product->coupon_price }}</span><span
-                                            class="price_gray"
-                                            style="font-size:10px;padding-left: 10px;">¥<i>{{ $product->zk_final_price }}</i></span>
-                                </div>
-                            </div>
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-            <div class="morelinks"><a href="/product.html">查看更多</a></div>
-        </div>
-    </div>
-</div>
-<script src="//cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
-<script src="//cdn.bootcss.com/jquery-weui/1.0.1/js/jquery-weui.min.js"></script>
-<script src="/weui/lib/fastclick.js"></script>
-{{--<script src="/static/js/jquery-Spinner.js"></script>--}}
-<script src="//cdn.bootcss.com/jquery-weui/1.0.1/js/swiper.min.js"></script>
-<script src="//cdn.bootcss.com/jquery-weui/1.0.1/js/city-picker.min.js"></script>
-<script>
-    $("#select-icon").on("click", function () {
-        $(this).hide();
-        $('#searchInput').val('');
-        $('#searchBar').addClass('weui-search-bar_focusing');
-        $('#searchBar').show();
-        $("#searchInput").focus();
-    });
+        $(document.body).infinite(200);
+        var loading = false;  //状态标记
+        $(document.body).infinite().on("infinite", function () {
+            var page = parseInt($('#page').html());
+            if (loading) return;
+            loading = true;
+            $.get("/more?page=" + page, function (data) {
+                $('#page').html(parseInt(data.page) + 1);
+                if (data.html) {
+                    $('#list_item').append(data.html);
+                    loading = false;
+                }
+                if (data.flag === 'no') {
+                    $(document.body).destroyInfinite();//没数据了销毁
+                    $('#more').hide();
+                    $('#footer').show();
+                }
+            });
+        });
 
-    function hidesearch() {
-        $('#searchBar').hide();
-        $('#searchInput').val('');
-        $('#select-icon').show();
-        return true;
-    }
+        function show(id) {
+            if ($('#tkl_' + id).css('display') === 'none') {
+                $('#tkl_' + id).css({'display': 'block'});
+            } else {
+                $('#tkl_' + id).hide();
+            }
+        }
 
-    //轮播
-    $(".swiper-banner").swiper({
-        loop: true,
-        autoplay: 3000,
-    });
+        function copyText(id, message) {
+            var content = $('#txt_' + id).val();
+            var aux = document.createElement("input");
+            aux.setAttribute("value", content);
+            document.body.appendChild(aux);
+            aux.select();
+            document.execCommand("copy");
+            document.body.removeChild(aux);
+            if (message == null) {
+                $.toast("复制成功，分享好友或直接打开淘宝领券", "text");
+            } else {
+                $.toast(message, "text");
+            }
+        }
 
-    //新品推荐
-    $(".swiper-jingxuan").swiper({
-        pagination: '.news-pagination',
-        loop: true,
-        paginationType: 'custom',
-        slidesPerView: 3,
-        paginationClickable: true,
-        autoplay: 3000,
-        spaceBetween: 2
-    });
+        $("form").on("submit",function(event){
+            var q = $('#searchInput').val();
+            window.location.href = '/search?q=' + q;
+            return false;
+        });
 
-    //会员精选
-    $(".swiper-jiushui").swiper({
-        pagination: '.jingxuan-pagination',
-//        loop: true,
-        paginationType: 'custom',
-        slidesPerView: 3,
-        slidesPerColumn: 2,
-        paginationClickable: true,
-        autoplay: 3000,
-        spaceBetween: 2
-    });
-</script>
-</body>
-</html>
+        var pb1 = $.photoBrowser({
+            items: [
+                "/img/buzhou.jpg",
+            ],
+
+            onSlideChange: function(index) {
+                console.log(this, index);
+            },
+
+            onOpen: function() {
+                console.log("onOpen", this);
+            },
+            onClose: function() {
+                console.log("onClose", this);
+            }
+        });
+        $("#buzhou").click(function() {
+            pb1.open(2);
+        });
+
+    </script>
+@endsection

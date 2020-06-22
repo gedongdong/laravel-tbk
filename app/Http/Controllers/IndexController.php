@@ -23,8 +23,8 @@ class IndexController extends Controller
             $userAgent->save();
         }
 
-        $products = Product::where('status', 1)->whereNotNull('coupon_info')->where('coupon_end_time', '>', date('Y-m-d'))->orderBy('volume', 'desc')->paginate(20);
-        return view('index', ['products' => $products]);
+        //$products = Product::where('status', 1)->whereNotNull('coupon_info')->where('coupon_end_time', '>', date('Y-m-d'))->orderBy('volume', 'desc')->paginate(20);
+        return view('index');
     }
 
     public function more(Request $request)
