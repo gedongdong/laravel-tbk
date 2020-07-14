@@ -55,19 +55,24 @@ class GetData extends Command
 
         //选品库
         echo '处理选品库。。。' . PHP_EOL;
+        //$param = [
+        //    'fields' => 'favorites_title,favorites_id,type',
+        //];
         $param = [
-            'fields' => 'favorites_title,favorites_id,type',
+            'adzone_id'   => 110070750232,
+            'material_id' => 31519,
+            'page_size'   => 100
         ];
-        $res   = $app->uatm->getFavorites($param);
+        $res   = $app->dg->materialOptimus($param);
+        //$res   = $app->uatm->getFavorites($param);
 
-        $results = $res->results ?? '';
+        $results = $res->result_list->map_data ?? '';
         if ($results) {
-            foreach ($res->results->tbk_favorites as $item) {
+            foreach ($results[0]->favorites_info->favorites_list->favorites_detail as $item) {
                 Favorites::updateOrCreate(
                     ['fav_id' => $item->favorites_id],
                     [
-                        'title' => $item->favorites_title,
-                        'type'  => $item->type,
+                        'title' => $item->favorites_title
                     ]
                 );
             }
@@ -76,9 +81,9 @@ class GetData extends Command
         $favids = Favorites::pluck('fav_id')->toArray();
         if ($favids) {
             $param = [
-                'fields'    => 'num_iid,title,pict_url,small_images,reserve_price,zk_final_price,user_type,provcity,item_url,click_url,nick,seller_id,volume,tk_rate,zk_final_price_wap,shop_title,type,status,category,coupon_click_url,coupon_end_time,coupon_info,coupon_start_time,coupon_total_count,coupon_remain_count',
-                'adzone_id' => 110070750232,
-                'page_size' => 100,
+                'adzone_id'   => 110070750232,
+                'page_size'   => 100,
+                'material_id' => 31539,
             ];
             foreach ($favids as $favid) {
                 echo '处理选品库中的商品。。。' . $favid . PHP_EOL;
@@ -86,21 +91,21 @@ class GetData extends Command
 
                 $param['page_no'] = 1;
 
-                $res1 = $app->uatm->getItemFavorites($param);
+                $res1 = $app->dg->materialOptimus($param);
                 $this->handleProduct($res1, $favid);
 
                 $param['page_no'] = 2;
 
-                $res2 = $app->uatm->getItemFavorites($param);
+                $res2 = $app->dg->materialOptimus($param);
                 $this->handleProduct($res2, $favid);
             }
 
             echo '开始生成淘口令...' . PHP_EOL;
-            $products = Product::where('coupon_click_url', '!=', '')->select('id', 'coupon_click_url', 'tkpwd')->get();
+            $products = Product::where('coupon_share_url', '!=', '')->select('id', 'coupon_share_url', 'tkpwd')->get();
             foreach ($products as $product) {
                 $param = [
                     'text' => '淘宝天猫优惠券',
-                    'url'  => $product->coupon_click_url
+                    'url'  => $product->coupon_share_url
                 ];
                 $res3  = $app->tpwd->create($param);
                 var_dump($res3);
@@ -116,11 +121,19 @@ class GetData extends Command
 
     protected function handleProduct($res, $favid)
     {
-        $results = $res->results->uatm_tbk_item ?? '';
+        $results = $res->result_list->map_data ?? '';
         if ($results) {
             foreach ($results as $item) {
                 print_r($item);
-                $small_images = (array)$item->small_images ? implode(',', array_values((array)$item->small_images)[0]) : '';
+                $small_images = $item->small_images ?? '';
+                if ($small_images) {
+                    $small_images = (array)$small_images ? implode(',', array_values((array)$small_images)[0]) : '';
+                }
+
+                $coupon_share_url = $item->coupon_share_url ?? '';
+                if ($coupon_share_url) {
+                    $coupon_share_url = 'https:' . $coupon_share_url;
+                }
 
                 $coupon_price = $item->coupon_info ?? null;
                 if ($coupon_price) {
@@ -128,28 +141,23 @@ class GetData extends Command
                     $coupon_price = str_replace('元', '', $coupon_price[1]);
                 }
                 Product::updateOrCreate(
-                    ['num_iid' => $item->num_iid],
+                    ['num_iid' => $item->item_id],
                     [
                         'title'               => $item->title,
                         'favorites_id'        => $favid,
-                        'pict_url'            => $item->pict_url,
+                        'pict_url'            => 'https:' . $item->pict_url,
                         'small_images'        => $small_images,
                         'reserve_price'       => $item->reserve_price ?? '',
                         'zk_final_price'      => $item->zk_final_price ?? '',
                         'user_type'           => $item->user_type,
-                        'provcity'            => $item->provcity ?? '',
-                        'item_url'            => $item->item_url,
-                        'click_url'           => $item->click_url,
+                        'click_url'           => 'https:' . $item->click_url,
                         'nick'                => $item->nick ?? '',
                         'seller_id'           => $item->seller_id,
                         'volume'              => $item->volume ?? 0,
-                        'tk_rate'             => $item->tk_rate,
-                        'zk_final_price_wap'  => $item->zk_final_price_wap ?? '',
+                        'commission_rate'     => $item->commission_rate,
                         'shop_title'          => $item->shop_title ?? '',
-                        'type'                => $item->type,
-                        'status'              => $item->status,
-                        'category'            => $item->category ?? '',
-                        'coupon_click_url'    => $item->coupon_click_url ?? '',
+                        'category_id'         => $item->category_id ?? '',
+                        'coupon_share_url'    => $coupon_share_url,
                         'coupon_end_time'     => $item->coupon_end_time ?? '',
                         'coupon_info'         => $item->coupon_info ?? null,
                         'coupon_price'        => $coupon_price,
@@ -162,19 +170,19 @@ class GetData extends Command
         }
     }
 
-    protected function generateSign($params)
-    {
-        ksort($params);
-
-        $stringToBeSigned = $this->secretKey;
-        foreach ($params as $k => $v) {
-            if (!is_array($v) && "@" != substr($v, 0, 1)) {
-                $stringToBeSigned .= "$k$v";
-            }
-        }
-        unset($k, $v);
-        $stringToBeSigned .= $this->secretKey;
-
-        return strtoupper(md5($stringToBeSigned));
-    }
+    //protected function generateSign($params)
+    //{
+    //    ksort($params);
+    //
+    //    $stringToBeSigned = $this->secretKey;
+    //    foreach ($params as $k => $v) {
+    //        if (!is_array($v) && "@" != substr($v, 0, 1)) {
+    //            $stringToBeSigned .= "$k$v";
+    //        }
+    //    }
+    //    unset($k, $v);
+    //    $stringToBeSigned .= $this->secretKey;
+    //
+    //    return strtoupper(md5($stringToBeSigned));
+    //}
 }

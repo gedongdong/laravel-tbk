@@ -38,7 +38,6 @@
 
 @section('script')
     <script src='/weui/js/swiper.js'></script>
-    <script src='/zclip/jquery.zclip.js'></script>
     <script>
         $(".swiper-container").swiper({
             loop: true,
