@@ -104,7 +104,7 @@ class GetData extends Command
 
         TWD:
         echo '开始生成淘口令...' . PHP_EOL;
-        $products = Product::where('coupon_share_url', '!=', '')->whereNotNull('tkpwd')->select('id', 'coupon_share_url', 'tkpwd')->get();
+        $products = Product::where('coupon_share_url', '!=', '')->whereNull('tkpwd')->select('id', 'coupon_share_url', 'tkpwd')->get();
         foreach ($products as $product) {
             $param = [
                 'text' => '淘宝天猫优惠券',
