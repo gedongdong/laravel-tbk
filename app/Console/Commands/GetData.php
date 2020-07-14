@@ -113,7 +113,7 @@ class GetData extends Command
             $res3  = $app->tpwd->create($param);
             var_dump($res3);
             $result = $res3->data->model ?? '';
-            if ($results) {
+            if ($result) {
                 $product->tkpwd = $result;
                 $product->save();
             }
