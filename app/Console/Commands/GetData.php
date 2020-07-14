@@ -52,6 +52,7 @@ class GetData extends Command
         ];
 
         $app = Factory::Tbk($config);
+        goto TWD;
 
         //选品库
         echo '处理选品库。。。' . PHP_EOL;
@@ -99,21 +100,22 @@ class GetData extends Command
                 $res2 = $app->dg->materialOptimus($param);
                 $this->handleProduct($res2, $favid);
             }
+        }
 
-            echo '开始生成淘口令...' . PHP_EOL;
-            $products = Product::where('coupon_share_url', '!=', '')->select('id', 'coupon_share_url', 'tkpwd')->get();
-            foreach ($products as $product) {
-                $param = [
-                    'text' => '淘宝天猫优惠券',
-                    'url'  => $product->coupon_share_url
-                ];
-                $res3  = $app->tpwd->create($param);
-                var_dump($res3);
-                $result = $res3->data->model ?? '';
-                if ($results) {
-                    $product->tkpwd = $result;
-                    $product->save();
-                }
+        TWD:
+        echo '开始生成淘口令...' . PHP_EOL;
+        $products = Product::where('coupon_share_url', '!=', '')->select('id', 'coupon_share_url', 'tkpwd')->get();
+        foreach ($products as $product) {
+            $param = [
+                'text' => '淘宝天猫优惠券',
+                'url'  => $product->coupon_share_url
+            ];
+            $res3  = $app->tpwd->create($param);
+            var_dump($res3);
+            $result = $res3->data->model ?? '';
+            if ($results) {
+                $product->tkpwd = $result;
+                $product->save();
             }
         }
 
