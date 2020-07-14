@@ -52,7 +52,6 @@ class GetData extends Command
         ];
 
         $app = Factory::Tbk($config);
-        goto TWD;
 
         //选品库
         echo '处理选品库。。。' . PHP_EOL;
@@ -102,7 +101,6 @@ class GetData extends Command
             }
         }
 
-        TWD:
         echo '开始生成淘口令...' . PHP_EOL;
         $products = Product::where('coupon_share_url', '!=', '')->select('id', 'coupon_share_url', 'tkpwd')->get();
         foreach ($products as $product) {
